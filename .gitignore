@@ -1,0 +1,20 @@
+# Виртуальное окружение
+venv/
+env/
+ENV/
+.venv/
+
+# База данных (SQLite)
+db.sqlite3
+db.sqlite3-journal
+
+# Загруженные файлы (коды и фото)
+media/
+
+# Файлы кэша Python
+__pycache__/
+*.pyc
+
+# Файлы настроек с секретами
+.env
+local_settings.py
