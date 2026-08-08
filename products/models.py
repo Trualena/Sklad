@@ -56,3 +56,34 @@ class Photo(models.Model):
         verbose_name = 'Фотография товара'
         verbose_name_plural = 'Фотографии товаров'
         ordering = ['-uploaded_at']   # сначала новые фотофиксации 
+
+#история товара 
+class History(models.Model):
+    ACTION_TYPES=[('created', 'Создан'),#возможные действия для записи в ЦП 
+    ('updated', 'Изменён'),
+    ('photo_added', 'Фото добавлено'),
+    ('quantity_changed', 'Количество изменено'),
+    ('location_changed', 'Местоположение изменено'),
+    ('deleted', 'Удалён'),]
+
+    product=models.ForeignKey(Products, #относится к модели продукты
+                            on_delete=models.CASCADE,#при удалении товара его история удалится 
+                            related_name='history', verbose_name='Товар' )
+    action_type = models.CharField(max_length=20,#обязательное поле 
+                                   choices=ACTION_TYPES,
+                                   verbose_name='Тип действия')
+    created_at=models.DateTimeField(auto_now_add=True, #время записи
+                                    verbose_name="Дата и время")
+    details=models.TextField(blank=True,#доп.поле для комментариев (может быть пустым). У textfield нет ограничения символов  
+                             null=True, 
+                             verbose_name="Комментарий")
+
+    '''Позже будет автоматически добавлена авторизация'''
+
+    user = models.CharField(max_length=100, blank=True, null=True, verbose_name='Пользователь (кто выполнил действие)')
+    def __str__(self):
+        return f'{self.product.name}-{self.get_action_type_display()}- {self.created_at.strftime("%d.%m.%Y. %H:%M")}'
+    class Meta: 
+        verbose_name="История товара"
+        verbose_name_plural='История товаров'
+        ordering = ['-created_at']   # сначала новые записи
