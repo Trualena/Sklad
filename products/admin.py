@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Products, Photo, History 
+from .models import Products, Photo, History, Notification
 '''admin.site.register(Products)
 admin.site.register(Photo)'''
 
@@ -26,3 +26,9 @@ class HistoryAdmin(admin.ModelAdmin):
     list_filter = ['action_type', 'created_at']#фильтры 
     search_fields = ['product__name', 'details']#поиск по названию 
     readonly_fields = ['product', 'action_type', 'created_at', 'details']#только для чтения 
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display=['text', 'is_read', 'product', 'created_at']
+    list_filter=['created_at', 'is_read']
+    search_fields=['text']
+    readonly_fields=['created_at']

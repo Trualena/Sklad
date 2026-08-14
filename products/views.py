@@ -1,10 +1,10 @@
 #from django.shortcuts import render
-
+from rest_framework import permissions
 from rest_framework import viewsets, status
-from .models import Products, Photo 
+from .models import Products, Photo, Notification 
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import ProductsSerializers, PhotoSerializers
+from .serializers import ProductsSerializers, PhotoSerializers, NotificationSerializers
 class ProductViewSet(viewsets.ModelViewSet):
     queryset= Products.objects.all()
     serializer_class=ProductsSerializers#для преобразования данных из python в json и обратно
@@ -28,4 +28,22 @@ class ProductViewSet(viewsets.ModelViewSet):
         # Сериализуем созданный объект и возвращаем
         serializer = PhotoSerializers(photo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+'''API для уведомлений с возможностью фильтрации'''
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset=Notification.objects.all()
+    serializer_class=NotificationSerializers #акой сериализатор 
+    # permission_classes = [permissions.IsAuthenticated]  # позже 
+    
+    def get_queryset(self):
+        # Можно фильтровать по прочитанным/непрочитанным через параметры запроса
+            queryset = super().get_queryset()
+            is_read = self.request.query_params.get('is_read')
+            if is_read is not None:
+                if is_read.lower() == 'true':
+                    queryset = queryset.filter(is_read=True)
+                elif is_read.lower() == 'false':
+                    queryset = queryset.filter(is_read=False)
+            return queryset
     

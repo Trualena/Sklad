@@ -87,3 +87,18 @@ class History(models.Model):
         verbose_name="История товара"
         verbose_name_plural='История товаров'
         ordering = ['-created_at']   # сначала новые записи
+'''Класс для хранения уведомлений для сотрудников'''
+class Notification(models.Model):
+    text=models.TextField(verbose_name='Текст уведомления')
+    is_read = models.BooleanField(default=False, verbose_name='Прочитано')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')
+    product=models.ForeignKey('Products', on_delete=models.CASCADE, 
+                              null=True, blank=True,#связь необязательная уведомление может быть без привязки к товару
+                              related_name='notifications', verbose_name= 'Товар'#название в админке 
+                              )
+    def __str__(self):#как объект будет отображаться в админке, в списках и при выводе
+        return f'{self.text[:50]}...  ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
+    class Meta:
+        verbose_name = 'Уведомление'
+        verbose_name_plural = 'Уведомления'
+        ordering = ['-created_at']#сначала новые уведомления 
