@@ -6,3 +6,5 @@ class ProductsConfig(AppConfig):
 
     def ready(self):
         import products.signals   # подключение сигналов при старте
+        from .ml_utils import load_model
+        load_model() 
